@@ -1,0 +1,5 @@
+node -v
+npm init
+
+now initialize repo and to  git
+create readmefile
