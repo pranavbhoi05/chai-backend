@@ -1,5 +1,38 @@
 node -v
 npm init
+ 
+now initialize repo and add to git
+git init
+git add .
+ git config --global user.email "pranavbhoir182000@gmail.com"    
+>> git config --global user.name "pranav"
+git commit -m "add initial files for backend"
+now go to github and create new repo
+after creating gitrepo follow the command which are shown
 
-now initialize repo and to  git
-create readmefile
+*git branch -M main  (Renames your current branch to main (GitHub's default branch))
+##########################################################################################
+* we have not set origin yet so now set remote : git remote add origin https://github.com/pranavbhoi05/chai-backend.git
+*now git repo knows where to puch it remotely
+################################################################################################
+*git push -u origin main  
+(Pushes your local main branch to the remote (origin).
+-u sets it as the default upstream branch, so next time you can just use git push.)
+##############################################################################################
+
+create new file with name .gitignore (we will put some sensitive files here)
+* go to gitignore generator in browser and search (node) and create then copy and paste in gitignore file
+*create .env file
+*we mostly avoid to push .env file in git so hitesh has create .env.sample file so he can share it with us
+*now create new folder with name source (all directory files will store in here, depends upon you)
+*now create 3 files in src folder (index.js,app.js,constants.js)
+###############################################################################################
+*now package.json doesnt how we gonna make things work so add(type : "module") right above main : indesx.js
+NOTE : why we use module cause we gonna use import syntax (not require syntax) 
+WE WILL USE MODEL in this ENTITE PROJECT SO IT WILL MAINTAIN CONSISTANCY IN PROJECT
+###################################################################################################
+*sometimes we wanted to keep restarting server so we gonna use nodemon
+*go to nodemon site
+* npm i -D nodemon
+note: make changes in package.json file 
+     1. make changes in script tag: ("dev": "nodemon src/index.js") nodemon will keep reloading this file whererver we make changes
