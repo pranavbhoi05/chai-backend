@@ -41,3 +41,35 @@ note: make changes in package.json file
 *git push
 *we gonna need few folders in src so create folders
 mkdir controllers db middlewares models routes utils
+
+###################################################
+*prettier must be install to
+*npm i -D  prettier and also create file in main brach with name .prettierrc
+
+make changes in that file as per requirment , i did:
+{
+    "singleQuote": false,
+    "bracketSameLine": true,
+    "tabWidth": 2,
+    "semi": true,
+    "trailingComma": "es5"
+}
+
+#######################################
+
+create another file with name (.prettierignore) and make changes:
+/.vscode
+/node_modules
+./dist
+
+*.env
+.env
+.env.*
+
+NOTE:
+*The .prettierignore file tells Prettier which files or folders not to format, similar to .gitignore.
+*This prevents Prettier from modifying ignored files when running formatting commands.
+
+#############################################################################
+STILL:
+          WE HAVE DONE DEV DEPENDENCY IN PACKAGE.JSON BUT STILL WE HAVENT INSTALL DEPENDANCY OF  EXPREE AND MONGOOSE
