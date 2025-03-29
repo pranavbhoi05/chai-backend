@@ -36,3 +36,8 @@ WE WILL USE MODEL in this ENTITE PROJECT SO IT WILL MAINTAIN CONSISTANCY IN PROJ
 * npm i -D nodemon
 note: make changes in package.json file 
      1. make changes in script tag: ("dev": "nodemon src/index.js") nodemon will keep reloading this file whererver we make changes
+* check git status then commmit changes
+*git  commit -m "setup project files part-1"  
+*git push
+*we gonna need few folders in src so create folders
+mkdir controllers db middlewares models routes utils
