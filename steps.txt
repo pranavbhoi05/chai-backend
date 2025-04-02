@@ -73,3 +73,57 @@ NOTE:
 #############################################################################
 STILL:
           WE HAVE DONE DEV DEPENDENCY IN PACKAGE.JSON BUT STILL WE HAVENT INSTALL DEPENDANCY OF  EXPREE AND MONGOOSE
+
+
+now install MONGOOSE,EXPREE,dotenv
+
+*install dotenv cause all the things we will load from environment variable 
+* whenever we talk with database it always take time, in that case we are going to use async await(try,catch) or promices
+*never connect databasea in singel line always use async await
+now go to index,js
+*use effie and async operation
+*make sure the import thing
+*store mongose in variable
+
+#####################################################
+
+2nd approch:
+
+*create js file in db folder
+*import mongoose and db name
+*then add (trycatch) async and await both in seperate variabela and give console.log(`\n Mongo conneced !! DB host:${connectionInstance.connection.host}`) by adding connection .host i ll get to know which database im connecting (cause there are indivisul db's for production,testing,development)
+* in catch make sure to add precess.exit(1)  to handdle error
+*then export it
+*export default variablename   
+
+
+now import that variable index.js file and callback
+but
+in src index.js always import.env file in code at very first line
+ *we also need to config that file :
+  dotenv.config({
+  path : `./env`
+})
+
+now go to package.json and edit
+"dev": "nodemon -r dotenv/config src/index.js"
+also
+Without this flag, you'd need to:
+Add require('dotenv').config() at the top of index.js
+NOTE : What -r dotenv/config Does
+Preloads the dotenv package
+The -r flag stands for "require" and loads the specified module (dotenv/config) before your application starts.
+
+Automatically loads .env file
+The dotenv/config module (from the popular dotenv package) automatically:
+
+Looks for a .env file in your project root
+
+Parses its contents (key-value pairs)
+
+Injects them into process.env
+
+####################################################
+
+then run numrun dev
+
