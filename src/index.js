@@ -1,5 +1,4 @@
 import dotenv from "dotenv";
-
 import connectDB from "./db/index.js";
 
 
@@ -9,8 +8,19 @@ dotenv.config({
 
 
 connectDB()
+.then(()=> {
+  app.liten(process.env.PORT || 8000, ()=> {
+    console.log(`Server is reunning at port : 
+      ${process.env.PORT} `);
+  })
+  app.on("error",(err) => {
+    console.log("error",err);
+  })
+})
+.catch((err) => {
+  console.log("MONGO DB CONNECTION FAILED", err);
 
-
+})
 
 
 
@@ -25,6 +35,9 @@ connectDB()
 
 
 /*
+
+// BY USING EFFIE function
+
 import express from "express";
 const app = express();
 

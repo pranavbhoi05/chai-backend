@@ -93,6 +93,8 @@ now go to index,js
 *import mongoose and db name
 *then add (trycatch) async and await both in seperate variabela and give console.log(`\n Mongo conneced !! DB host:${connectionInstance.connection.host}`) by adding connection .host i ll get to know which database im connecting (cause there are indivisul db's for production,testing,development)
 * in catch make sure to add precess.exit(1)  to handdle error
+#NOTE : process.exit(1) = *"This error is so bad, we need to stop everything now." 🔴
+                   *Use it only when continuing would cause worse problems than shutting down. 
 *then export it
 *export default variablename   
 
@@ -126,4 +128,167 @@ Injects them into process.env
 ####################################################
 
 then run numrun dev
+
+####################################################
+3/4/2025 vid no 9 = api responce and error handling
+
+*previously our db was succesfuly connected but our app was'nt connected
+*our new task is to start listen from app
+
+*go to app.js and import express
+*as we have (connected db ) in (db folders index.js) we have to return promises in main index file too, why ? (cause we have written async method in db folder and whenever we write asyck method, then techniquly we have to return promises (main)in index.js file too)
+
+*now at .then() and .catch() method and add listen method 
+*also add app.on You can listen for errors (though Express has its own error-handling middleware).
+
+#####################################################################
+*go to express documentaion for more info
+*req.params : whenever we receive data from URL mostly come from (req.params)
+*req.body : data comes in forms and json format in (req.body)
+*sometimes we will take data cookie 
+#######################################################################
+
+*go to browser then search for npmjs and search for cookie-parser and corest to see documentaion 
+
+now install cookie-parser and cors:
+
+*npm i cookie-parser cors
+NOTE : you can check in package.json is they are install
+*now  import this files in app.js
+*now configure this files in here:
+app.use(cors())
+NOTE : this (use) method use in middleware and configuration
+we can also do setting like : we can define origin (urls)
+
+*make changes in that cors method : 
+*1.add origin in {} and give path to link (add from env file) but first need to create that variable in process.env.CORS_ORIGIN file
+NOTE :  whenever we SEE (*) in origin it is known for allow all request 
+#NOTE:  CORS CAONTAINS OBJECT
+
+*now (,) and ctrl + shift (to see more option)
+* credentials : true
+
+###################################################
+
+NOTE : more settings to do before we jump to cookies cause data is gonna come from many places like :
+1. url,
+2.json format,
+3.few will send in body (form),
+4.few will send form in json
+
+SOMTIMES WE NEED TO ADD SOME LIMITS IN IT CAUSE WE DONT WANT CRASH OUR SERVER CAUSE OF (UNLIMITED JSON FILE AND ETC)
+*now again add app.use(express.json()) in app.js
+[this line mean we are accepting json format in express]
+*again ctrl + shift (to see more options)
+*set LIMITS (i did 20 kbs)
+
+*somtimes data comes in the form of url in the format of (e.g %20)
+to make that urls understandable we add (express.urlencoded) in app.js
+*can also add extended (its like can give nested object) its not nessesry to give and we can also add limit
+
+*somtimes we wanted to store files,pdf or images , then we create public folder which amyone can anyone access
+app.use(express.static("public"))
+
+NOTE : this 3 majer components are imp in app
+express.urlencoded
+express.json
+express.static
+*also add cookieParser() in app
+cookie-parse = to access and set cookies in user's browser, by using this (only server can read and perform operation on it)
+
+########################################################
+4/4/2025 vid no 9 (api responce and error)
+
+#read notes about middlewares cause we gonna use it now
+#Middleware can block requests like an (if condition), but it’s more powerful. (e.g instagram url login)
+#we can add multiple midleware for checking
+#note : (err,req,res,next) after fulfilling the condition (next) flag will move to another condition to cheak
+
+#######################################################
+#utils
+
+#just cause it takes time in dbconnect so its esetial to use async await
+#and try catch is also required to apply 
+#we got 2 option either we can use (trycatch) or (.then.catch)
+
+ 
+
+* we have set higher order function in variable (asyncHandler)
+*const asyncHandler = (fn) => async (req, res, next) => {
+*now apply trycatch
+*in catch use res.status method 
+error.code and you also send 500
+*can also send add .json responce
+*we add success flag in .json (so the frontend person will get easy)
+*also add message in .json flag
+* (try) part : 
+await fn(req, res, next)
+
+###################################################
+2nd approch using .then and .catch
+
+*const asyncHandler = (requestHandler) => {
+    return (req, res, next) => {
+        Promise.resolve(requestHandler(req,res,next)).
+        catch((err) => next (err))
+    }    
+ }
+ *export { asyncHandler}
+
+ ###################################################
+
+ 5/4/2025 (creating structure of errors)
+
+#we have to makes errors in centralizze from (so we will not have to revise this all the time   )
+#we wanted to statderdize error of api and responce of api
+#so we gonna have to write code,it willbe benefitial. (benefits): all the responce and error will come in standerdize form
+#browse site : nodejs api error
+#as we do know js, we have knowladge of classes and inheritance (so we can overwrite the error methods) 
+
+*create file (apierror.js) in utils
+*create class named(apierror) and extend with Error
+#read documentaion in error.txt (i have mention (error.txt) name file in this folder)
+
+##########################################################
+5/4/2025 (apiresponce.js)  same video
+
+CODE: class ApiResponse {
+    constructor(statusCode ,data, message = "success"){
+        this.statusCode = statusCode
+        this.data = data
+        this.message = message
+        this.success = statusCode < 400
+    }
+}
+
+*create new apiresponce.js file in utils
+*we send statusCode in this.success 
+*we always have to provide server status code in sucess 
+*just because we are sending responce so we will take statuscode below (400)
+*but in error you can send more than (400) 
+
+NOTE: SEE DOCUMENTATION OF STATUSCODE
+
+#########################################################################
+
+6/4/2025  2:32AM  (video no 9 user and video model wuth hooks and jwt)
+
+# FEW SETTING ARE YET TO SET  : whenever error appears it must go through apierror.js
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
