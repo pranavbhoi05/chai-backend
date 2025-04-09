@@ -1,0 +1,40 @@
+// its same as app.on method
+// we wiil not write arrow fun herer, cause we can't access this ref in it, just take normal function
+//just cause encryption is complex process and take time so we ll use async function
+//once our work is done (next) flag will pass to the next middleware
+ 
+ * userSchema.pre("save", async function(next){
+
+###############################################################  
+ // to prevent multiple time password change we add check
+ //if password is modified then only we will encrypt it
+ //this.isModified("password") : to check if password is modified or not
+
+ *  if(!this.isModified("password")) return next()
+
+#################################################################  
+//this.password :took access of password feild
+//bcypt.hast : to encrypt the password
+//(this.password,10) : this.password is the password we want to encrypt and 10 is the salt round (10 is good for production)
+export User = mongoose.model("User",userSchema);
+
+* this.password = bcrypt.hash(this.password,10)
+* next()
+* } )
+
+
+$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+                                 NEXT CODE
+
+//in this userSchema there is methods property where we can add many methods as we want.as we have added isPasswordCorrect
+ 
+ * userSchema.methods.isPasswordCorrect = async function (password){
+
+###################################################################################
+
+ //bcrypt library can also check password (in will give value in true or false),it has compare method which takes two arguments password and hashed password (this,this.password)
+// it takes time,so we await function
+// and return will give value in true or false
+
+ * return await bcrypt.compare(password,this.password )
+}  

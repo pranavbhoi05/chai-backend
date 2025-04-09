@@ -1,0 +1,20 @@
+
+Always use salt rounds : they're your first defense against password breaches! 🔒
+
+#####################################################################################
+
+Definition:
+Salt rounds (or cost factor) determine how many times a password is hashed to slow down brute-force attacks.
+In bcrypt, the number 10 in bcrypt.hash(password, 10) means:
+The password will be hashed 2¹⁰ = 1,024 times (iterations)
+Higher numbers = more secure but slower
+
+######################################################################################
+
+. Key Properties
+Unpredictable: Each hash is unique, even for identical passwords
+
+Adaptable: Can increase rounds as hardware improves
+
+Future-proof: Slows down attackers more than legitimate users
+

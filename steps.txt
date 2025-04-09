@@ -129,7 +129,7 @@ Injects them into process.env
 
 then run numrun dev
 
-####################################################
+$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 3/4/2025 vid no 9 = api responce and error handling
 
 *previously our db was succesfuly connected but our app was'nt connected
@@ -196,7 +196,7 @@ express.static
 *also add cookieParser() in app
 cookie-parse = to access and set cookies in user's browser, by using this (only server can read and perform operation on it)
 
-########################################################
+########################################################################################
 4/4/2025 vid no 9 (api responce and error)
 
 #read notes about middlewares cause we gonna use it now
@@ -269,17 +269,104 @@ CODE: class ApiResponse {
 
 NOTE: SEE DOCUMENTATION OF STATUSCODE
 
-#########################################################################
+$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 6/4/2025  2:32AM  (video no 9 user and video model wuth hooks and jwt)
 
 # FEW SETTING ARE YET TO SET  : whenever error appears it must go through apierror.js
 
+#waste day (just watch video and did not implement)
 
+$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
+7/4/2025  12:47am (video no 9 user and video model wuth hooks and jwt)
 
+NOTE: in this topic we will see: 
+1.how to write aggrigation pipeline 
+2.jwt 
+3.bcrypt
+4.how models are created in mongoose 
 
+###########################################
 
+*create file (user.model.js) and (video.model.js) in models folder
+*go to readme file where i saved eraser file
+*now create schema for user model and video model
+#after writing models on user and video(we have to work on watch history , it makes our project complex and next level)
+#for that we goona use package ,(mongoose-aggregate-paginate-v3) from npm (READ AGGREGATION PIPLINE) aggrigation means collection.
+#true power of mongo db comes from aggregate queries 
+
+*install : npm install mongoose-aggregate-paginate-v2
+*inject in video.model.js (import mongooseAggregatePaginate from 
+"mongoose-aggregate-paginate-v2";)
+#NOTE : before export you gonna have to use it,ALSO read plugin,middleware in npm,you can create your own plugin too
+
+#bcrypt : (A library to help you hash passwords.)
+#jwt (json web token): 1. to create token , 
+                       2. for cryptography (to handle encryption,decryption)
+*npm i bcrypt 
+*npm i jsonwebtoken
+*import jwt and bcrypt in "user"
+#direct encryption isnt possible SO we'll take help of(hooks),go to documentaion of mongoose and click on middleware, you'll see hooks
+#pre (hook) : whenever user make changes in data (controller), just before saving it we can run operation like(pass encryption)
+
+#which event u want use in pre
+1. validate
+2.save
+3.updateOne
+4.deleteOne
+
+*go to user
+*userSchema.pre("save", async function(next){
+    if(!this.isModified("password")) return next()
+    this.password = bcrypt.hash(this.password,10)
+next()
+} )
+#now our pass is encrypted and saved
+#CHECK OUT USER.MODEL.TXT FILE (FOR UNDERSTANDING)
+
+################################################
+*NOW WE'LL CREATE METHOD (WHY) : to verify the password is valid or not , 
+# WE CAN Also DESIGN COSTOM METHOD
+*go to user.model.txt for NEXT CODE 
+
+#################################################
+JWT (json web token) : (its like key )anyone who got this token, i will share my data
+#go to site jwt.io site (for more info)
+#What is a JWT Bearer Token?
+1.A compact, URL-safe token following the RFC 7519 standard
+2.Contains JSON payload with user claims (e.g., user ID, roles)
+3.Used as a Bearer token in the Authorization header
+
+*now we will generate access token
+*go to env file
+*To generate ACCESS_TOKEN_SECRET Go to site : sha 256
+*ACCESS_TOKEN_SECRET
+*ACCESS_TOKEN_EXPIRY
+*REFRESH_TOKEN_SECRET
+*REFRESH_TOKEN_EXPIRY
+#we are using session and cookies at same time
+#access token isnt going to store in db, while refresh token will be saved in db
+
+#########################################################################
+# access token generate method: 
+                                to generate access token its same process as we create our own method (above)
+ 
+* in user.model file : (read jwt sign syntax):
+*jwt.sign({
+  data: 'foobar'
+}, (path of ACCESS_TOKEN_SECRET), (path for expiry token) in {expririn : }
+*use this syntax to create model for creating(access token and refresh token) 
+)
+
+NOTE : OUR SCHEMA STRUCTURE HAS BEEN created
+
+$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+#9/4/2025 10:4 pm (video no 10 : How to upload file in backend | Multer)
+# NEXT TARGET : HOW TO ADD DATA IN DB (WHICH WE HAVE CREATED )
+#we dont do file handling in our own server
+#either they use their specialize 3rd party services or aws 
 
 
 
