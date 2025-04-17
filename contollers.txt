@@ -1,0 +1,18 @@
+definition:
+            1. Controllers are the "traffic directors" of your application that handle request/response logic.
+            2. Handle HTTP requests/responses (validate inputs, process data, return results).
+
+
+
+Core Responsibilities of Controllers
+1.Receive requests (GET, POST, PUT, DELETE)
+2.Validate input data
+3.Call services/models for business logic
+4.Send responses (success/error)
+
+. What to Include in Controllers
+✅ Request validation (use Joi, Zod, or custom validation)
+✅ Error handling (try/catch blocks)
+✅ Response formatting (consistent JSON structure)
+✅ Service calls (delegate business logic to services)
+✅ Status codes (proper HTTP responses)

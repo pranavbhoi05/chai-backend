@@ -1,0 +1,8 @@
+The pattern of returning null in the catch block after deleting the
+local file serves several important purposes in backend Cloudinary
+upload operations.
+
+ // NULL : The upload failed, so return null
+        //Prevent Orphaned Files: The local file is deleted since the upload failed
+        // Avoid Storage Bloat: Prevents accumulation of failed upload files on your server
+    

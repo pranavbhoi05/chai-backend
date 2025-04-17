@@ -365,17 +365,126 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 #9/4/2025 10:4 pm (video no 10 : How to upload file in backend | Multer)
 # NEXT TARGET : HOW TO ADD DATA IN DB (WHICH WE HAVE CREATED )
-#we dont do file handling in our own server
-#either they use their specialize 3rd party services or aws 
+#we dont do file handling in our own server,either they use their specialize 3rd party services or aws 
+#we gonna use clodinary(will file upload on its server) and multer(will upload file through multer)
+
+(what we gonna do):
+                1.we'll take file from user, and will keep that file on our own server for temporary
+                2.next we'll take that file from local storage (our server) and upload on cloudinary 
+		3.next by using fs we'll write code to unlink(delete) the file which is we kept on our own server
+
+*npm i cloudinary
+*npm i multer
+*created file name cloudinary.js in utils
+*now import clodinary in that file
+*also import fs 
+*copy entire code from clodinary side and paste in file 
+*all configuration are given by clodinary ,we jsut need to make few changes
+*we gonna have add few things in .env file which are: CLOUDINARY_CLOUD_NAME =,CLOUDINARY_API_KEY = ,CLOUDINARY_API_SECRET = 
+#NOTE : we can make changes in our cloudinary api keys,name and secret
+
+#Upload the image to Cloudinary 
+*we'll create method and give path of local file , once file successfuly upload ,we will unlink that file 
+*files are complex are same as db, so we'll apply trycatch in here 
+*we'll add condition if local path is present ot not (if not present we;ll return null)
+*next step upload the file on cloudinary , we can also add resource_type(e.g png,img,video)
+*just because its async task we'll add await and hold in variable , also print the responce (console.log('File uploaded to Cloudinary:', response.url);)
+*make sure to return responce to user
+
+#if file is not successfuly upload , so we still have option of catch
+#upload is not successfull then for safty perpose we need to unlink(delete)the file,else currupted file satys in server
+*now write fs method in catch(), will use unlinkSync (sync) insted async cause we want to perform that process immidiatly
+ *return null and export cloudinary 
+
+#############################################################3
+creating middleware unsing multer:
+*go to multer documentaion and copy the syntax 
+*just cause in that syntax (req, file, cb) file is coming ,thats why we using multer
+#cb (callback)
+*i'll make all changes in public file,so made changes in it :  cb(null, './public/temp')
+
+*filename : if u want to change filename like unique file name
+#file.originalname → The original name of the uploaded file (e.g., image.jpg).
 
 
+#cb(null, file.originalname):
+# 1. Keeps the original filename (no modification).
+# 2. Risk: If two files with the same name are uploaded, the second will overwrite the first.
 
 
+#Use Case of Date.now() in Multer Filenames
+When handling file uploads, Date.now() is commonly used to generate a unique filename and avoid conflicts. Here’s why and how it works:
+
+* export const upload = multer({ storage: storage })
+
+#now just cause i have multer, when i write routes and controlers, when im expecting files will come from that route,then i'll go to that route,and write storage method and call it 
+#NOW WE CAN HANDLE ANYKIND OF FILE handling ,like vids,img,pdf etc 
+
+$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+#15/4/2025 (video no 11 : http crash course)
+#read notes that o have created 
+
+$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+#15/4/2025 04:47 pm (video no 12 : router and controller with debugging)
+
+#CONTROLLER : Handle HTTP requests/responses (validate inputs, process data, return results).
+
+*create new file in controller (user.controller.js)
+#we have created helper file before ,incase if we face problem ,we've created wraper file(asyncHandler)
+#the only benefit is we won't need to put each things into (promises)trycatch everytime
+*so import  asyncHandler file in user.controller.js file
+*now we will create method and that methos's only task is to register a user
+*as previously we created asyncHandler which is higher order function which accept function, we'll write aync method in that function (req,res)
+*now give responce in status(e.g 200) and also give json responce as u like
+*now export registeruser
+
+########################################################################
+NEXT STEP : CREATE ROUTES
+(as we have created the method,but atleast that method suppose to run on url, so that we create route)
+
+*create fiel user.route.js in rouder folder and in that file
+*import {router} from 'express';
+const router = router();
+export default router;
+
+#we can also import this methods in index.js but it must be clean
+*so we will import this all things in app.js (cause production grade standerd)
+
+#we always write routes after cookieparser in app.js
+*import userRoutes from "./routes/user.routes.js"
+#NOTE userroutes is just variable give name as u like (e.g import myCustomUserRoutes from './routes/user.routes.js';)
+
+#priviosly we use to write route and controller at same time through (app.js)
+#but just cause we made all the things separate,we have write router separatly, so to bring router we need to bring middleware here 
+#so insted of app.get we'll use app.use
+
+*after importing routes to declare routes: 
+app.use("/api/users", userRoutes)
+# understanding the statment : always write /api for staderd terms,
+# users is like variable give any name u like,
+#userRoutes for which router u want to activate (which we already created)
 
 
+#as we have write this middleware,now anyone who type /user , then this mean u r giving control to userrouter
+then userrouter will take u to user.routes.js (which is location) and it will ask, on which route u want send user
+#then we will write route method in user.routes.js  
 
+*router.route("/register).post(registeruser)
+#explanation : we have newly created (/register) method here , and we've added post method, in this post method we've added method which has to be run , so we give  (registeruser), which we previously created in user.controller.js
+once user hit (http://localhost:8000/api/users/register) , it will take him registeruser
+*also import registeruser in route file
 
+#if we wanted to create login method, we won't need write import statement
+*if u wanted to create login method simply go to routes and create methos as we created register method
+#we will not make any changes in app.js
+#all the methods we gonna write after user will be written in user.routes.js
+#"/api/v1/users" = v1 for currenet version (standard practise)
 
+*makke sure to return asyncHandler in asyncHandler file 
+*npm run dev
+*if success server start then , go to postman site and paste your http url on + symbol url option
+*make sure to choose post option in it 
 
-
-
+#as we have got result from postman : status 200 and json response "ok, cause we have asked to give this two inties in controllers

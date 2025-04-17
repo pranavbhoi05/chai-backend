@@ -1,0 +1,72 @@
+Cache vs. Cookies – Simple Explanation
+1. What’s a Cookie? 🍪
+*A small piece of data stored in your browser (like a sticky note).
+*Used to remember you (e.g., login info, preferences).
+Example: When you log into Facebook, a cookie keeps you signed in.
+
+2. What’s Browser Cache? 📦
+*Temporary storage for website files (images, scripts) to load pages faster.
+*Example: When you revisit YouTube, your browser loads logos & buttons from cache instead of downloading them again.
+
+"Cache Cookie" Confusion 🔄
+*Not a real thing, but sometimes people mix up:
+     *Cookies → Remember you (user data).
+     *Cache → Remember website files (for speed).
+
+Why It Matters?
+*Security Risk: If a website caches a page with your private cookie (like a session ID), another user might see your data!
+*Fix: Websites should block caching for private pages.
+
+Simple Example:
+*Cookie: Your name tag 🏷️ (sent to the server).
+*Cache: A backpack 🎒 storing website stuff (not sent to the server).
+
+##############################################################################################
+
+HTTP HEADERS :
+	HTTP Headers are key-value pairs sent between a client (like a web browser) and a server during an HTTP request or response. They provide metadata about the request or response, such as content type, authentication, caching rules, and more.
+
+Types of HTTP Headers:
+Request Headers – Sent by the client to the server.
+
+Example: User-Agent, Accept, Authorization, Cookie
+
+Response Headers – Sent by the server back to the client.
+
+Example: Content-Type, Set-Cookie, Cache-Control, Server
+
+General Headers – Apply to both requests and responses.
+
+Example: Date, Connection, Transfer-Encoding
+
+Entity Headers – Describe the body of the resource (e.g., Content-Length, Content-Type).
+
+########################################################################################################
+ HTTP Method Cheat Sheet :
+
+GET    /users          → List all users  
+POST   /users          → The POST method in routes is used to create new resources or submit data to the server  
+GET    /users/1        → Get user #1  
+PUT    /users/1        → Update ALL of user #1  
+PATCH  /users/1        → Update PART of user #1  
+DELETE /users/1        → Delete user #1  
+
+###############################################################################################
+
+Real-Life Examples :
+
+*GET → Viewing a Twitter feed (GET /tweets).
+*POST → Sending a tweet (POST /tweets).(for adding things)
+*PUT → Editing your bio (PUT /profile).
+*DELETE → Deleting a tweet (DELETE /tweets/123).
+
+#############################################################################################
+
+HTTP STATUS CODE :
+
+Code Range	Type	                   Meaning
+1xx (100-199)	Informational	       "Request received, processing..." (Rare)=(for passing info to user)
+2xx (200-299)	Success	               "Request worked!"
+3xx (300-399)	Redirection	       "Go somewhere else..."
+4xx (400-499)	Client Error	       "You messed up!" (Bad request)=(if client mistakly send wrong info )
+5xx (500-599)	Server Error	       "Server messed up!"
