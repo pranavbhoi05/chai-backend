@@ -2,7 +2,7 @@ import mongoose, {Schema} from "mongoose";
 // insted of writing mongoose.Schema we can use Schema directly
 
 import jwt from "jsonwebtoken"; // for generating the token
-import bcrypt from "bcryptjs"; // for hashing the password
+import bcrypt from "bcrypt"; // for hashing the password
 
 const userSchema = new Schema({
     username : {
@@ -40,11 +40,11 @@ const userSchema = new Schema({
     }
    ],
    password : {
-    type : string,
+    type : String,
     required : [true, "Password is required"] // can also give cutome message using array
     },
     refreshToken : {
-        type : string,
+        type : String,
     }
 },
 {
@@ -88,4 +88,4 @@ userSchema.methods.generateRefreshToken = function () {
 
 }
 
-export User = mongoose.model("User",userSchema);
+export const User = mongoose.model("User",userSchema);

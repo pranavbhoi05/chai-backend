@@ -1,7 +1,7 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import {ApiError} from "../utils/apiError.js";
 import { User } from "../models/user.model.js";
-import {UploadonCloudinary} from "../utils/cloudinary.js";
+import {uploadonCloudinary} from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 
 const registerUser = asyncHandler(async (req, res) => {
@@ -32,13 +32,14 @@ const registerUser = asyncHandler(async (req, res) => {
   // }
 
   //to check multiple errors at once we'll pass array
-  if([fullname, email, username, password].some((feild)=>
-  feild?.trim()= "")
+  if(
+    [fullname, email, username, password].some((field) =>
+  field?.trim() === "")
 ){
     throw new ApiError(400, "All feilds are required")
   } 
   //can also create conditon for email format validation  
-}) 
+ 
 
 // step 3 : check if user already exists
   const existedUser = User.findone({
@@ -60,8 +61,8 @@ const registerUser = asyncHandler(async (req, res) => {
 
 // step 5 : upload them to cloudinary 
 
-const avatar = await UploadonCloudinary(avatarLocalPath)
-const coverImage = await UploadonCloudinary(coverImageLocalPath)
+const avatar = await uploadonCloudinary(avatarLocalPath)
+const coverImage = await uploadonCloudinary(coverImageLocalPath)
  
 if(!avatar){
   throw new ApiError(400, "Avatar file is required")
@@ -93,7 +94,9 @@ if(!createdUser){
 // step 9 : return response to frontend if successed
   
   return res.status(201).json(
-    new ApiResponse(201, createdUser , "User created successfully")
+    new ApiResponse(200, createdUser , "User created successfully")
   )
+
+})
 
 export {registerUser}

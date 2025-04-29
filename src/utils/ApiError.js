@@ -1,11 +1,11 @@
-class ApiError extends error {
+class ApiError extends Error {
     constructor(
 
         //this all are same as variables,so dont get confused on statuscode (name anything you want) 
         statuscode,
-        message: "something went wrong",
-        stack:"",
-        errors:[]     //to give multiple errors in array format
+        message = "something went wrong",
+        stack =  "",
+        errors = []     //to give multiple errors in array format
     ){
         super(message)
         this.statuscode = statuscode 
@@ -23,7 +23,7 @@ class ApiError extends error {
 
 }
 
-export { ApiError}
+export {ApiError}
 
 
          // error.captureStackTrace is a Node.js method
