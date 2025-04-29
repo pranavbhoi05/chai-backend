@@ -1,0 +1,43 @@
+Original Code (with Optional Chaining) :
+                                       const filePath = req.files?.avatar?.[0]?.path;
+
+################################################################################################
+
+Equivalent (Without) Optional Chaining :
+                                      const filePath = req.files && 
+                                      req.files.avatar && 
+                                      Array.isArray(req.files.avatar) && 
+                                      req.files.avatar[0] && 
+                                      req.files.avatar[0].path;  
+
+Explanation:
+Check if req.files exists (req.files is not null or undefined)
+
+Check if req.files.avatar exists
+
+Ensure req.files.avatar is an array (optional but good practice)
+
+Check if req.files.avatar[0] exists (array has at least one element)
+
+Finally, access req.files.avatar[0].path
+
+##########################################################################################
+Alternative (Using try-catch for Safety) :
+
+let filePath;
+try {
+  filePath = req.files.avatar[0].path;
+} catch (error) {
+  filePath = undefined; // or handle the error
+}
+
+##########################################################################################3
+
+Which One Should You Use?
+
+* Optional Chaining (?.) : is the cleanest and most modern approach (recommended if using ES2020+).
+
+* Manual Checks (&&) : are more verbose but work in older JavaScript environments.
+
+* try-catch is useful if you expect errors and want to handle them explicitly.
+

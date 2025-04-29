@@ -119,11 +119,9 @@ The -r flag stands for "require" and loads the specified module (dotenv/config) 
 Automatically loads .env file
 The dotenv/config module (from the popular dotenv package) automatically:
 
-Looks for a .env file in your project root
-
-Parses its contents (key-value pairs)
-
-Injects them into process.env
+*Looks for a .env file in your project root
+*Parses its contents (key-value pairs)
+*Injects them into process.env
 
 ####################################################
 
@@ -488,3 +486,113 @@ once user hit (http://localhost:8000/api/users/register) , it will take him regi
 *make sure to choose post option in it 
 
 #as we have got result from postman : status 200 and json response "ok, cause we have asked to give this two inties in controllers
+
+$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+#17/4/2025 12:20 pm (vid no 13 LOGIC BUILDING | REDISTER CONTROLLER)
+
+(in this topic we gonna properly regiser user,we will take data from user
+ through postman e.g name,email,photo etc , we will take this data to 
+ server and we'll add this to database, if face issue we'll also debuge)
+
+
+(algoritham) : steps to solve this probs 
+
+#just cause we dont have frontend ,we gonna take data through postman(get req,post req), and it also depends upon how we create models(username,fullname,email,password,)
+#validation : incase if user send empty username or email , email is in correct format or not and all the posible validation
+#check if user already exists : if his accout already exist (check yhrough username or email)
+#check for image , cheak for avatar : check our file exists or not
+#upload them to cloudinary after we'll check avatar is uploaded or not
+#create user object  :(why) cause when i send data in mongodb, and its no sequel db we mostly create object and upload it,so right after creating object we'll do creation which is - (create entry in db)
+#remove password and refresh token feild from response : we dont wanna share pass and refresh token to user
+#check for user creation success or failure
+#return response to frontend if successed 
+ 
+#############################################################################
+
+#its not nessesry if data come from body , it can come from url
+
+#step  1 : 
+       *in user.controller exreact data using destruturing of object which we want (fullname,email,username,password)
+       *for testing  console log (email),go to postman,past url,select body cause we r taking data from body,then select raw and then json
+       *enter data for testing in object format
+
+#file handling : we cant handle file here, but we can handle data only 
+                #as we have created multer(middleware) for file handling, look for exported filename
+                * go to routes and import upload file
+                #as we know middleware means (jate samay muzse milke jana),so we'll add middelware before execution, so 
+                *add upload just before execution (post(upload.feild[]),registerUser), just by usning dot we get to see various methos
+                #we choose feild cause it accepts array and we can now store many feild in that array as mush as we want,but in objects format
+                #to userstand more i have created txt file named avatar
+                #we took two feild avatar and cover image, can also take many 
+
+#step 2: check validation   
+    *we'll add id condition if value exist or not , we've create api error file so we'll also use that file to send status code and passing messages    
+    *make sure to import apierror file
+    #to check multiple errors at once we'll pass array and will use .some method (speciality : returns result in true or false) , we can also use .map
+    #insted of checking single condition we did add arry so we can check multiple feilds, so we can apply some or map method
+    #i have created txt file name (optional chaning) to understand ? and trim() 
+
+#step 3: user exist or not 
+    *import user from model (this user can directly contact with db, cause its made by mongoose)
+    #now this user will call on behalf of us
+    *we use findone method(if user is successfuly find , then returns)
+    *we'll ask to db to find the user which contains (e.g email or username) , if provided data matches,then throw error
+    #we'll use operator $or (to check if either username or email is already exist ot not)
+
+#step 4:  check images and avatar is uploaded
+        #till now, we get all data in  req.body,but just cause we have created middleware in routs, so middelware also gives access few things, what middleware do(add more feilds in req)
+        #as express has give (.body) by default, multer gives us (.files) access
+        #why we use req : req Contains the Uploaded Files
+        When you upload files using middleware like Multer or express-fileupload, the files are attached to the req (request) object under req.files.
+        #Without req, we wouldn't have access to the uploaded files.
+        #i have created file of chaining.txt (read it)
+        #incase if we have access of that files or not so  used optional chaining,then i add avatar, cause i want avatar(go to routes file where i declare)
+        #with avatar we get multiple options like png , jpg, size
+        #NOTE : 1.If the form field is named avatar (without array notation), req.files.avatar will be a single file object (not an array), so you can access its path directly
+                2. If the form field is named avatar[] (with square brackets, allowing multiple files),
+        # in this code req.files?.avatar[0]?.path : we took [0] cause we want its first property, we took optionally
+        # for path as have declear path in multer file 
+        *store in variable (avatarLocalPath), why local path ? , cause file is in our server, but not on cloudinary 
+        *same process goes to coverimage
+        *atleast avatar image is required , so add if condition , check if image exist ot not
+
+#step 5: upload them to cloudinary
+        #as per our avdanced preparation,we knew, we'll upload on cloudinary or (aws), so we've already write the code of cloudinary
+        *import UploadonCloudinary in user controller
+        #if u observe , u have write the code for failure(will delete file), but in success,we have'nt write the code for delete the code 
+        *to upload file : UploadonCloudinary(avatarLocalPath) , this process take time so add await and store in variable
+        *again add if condition , to check avatar exist, incase if file not exist, code will crash
+
+#step 6: create user object and
+#step 7: remove password and refresh token feild from response
+
+       #to make entry in db we had priviosly created user which talks with database
+       *user.create({}) : this method take objecrt
+       *we take fullname and avatar's url , why only url? (cause we dont wanna send entire object,we'll send only url to db)
+       *will also add coverimage : coverimage.url , but the prob is we'havent add consition to check if coverimage exist or not so we add ?. optional chaining
+       #and just cause its not exist, in that case add || (or) in "" empty string, cause its not compulsary   
+       *take email,password and username : username.tolowercase() 
+       *hold in variable and await , cause takes time while talking with server in server in diffrent continetal
+       #make suer to await in usermodel, in bcrypt , cause password hashing takes time           
+       #to check if user is created or not we got better approch : .findbyId(where we can pass id )
+       #when user is successfuly create, it doesnt just create data(e.g username,email,avatar) but also mongodb add _id feild with each new entry
+       #why use .findbyid() : 
+       #Fetch data from database: 1. it's a quick and direct way to get a document by its _id.
+                                 2. Example: You received only a user ID (e.g., from a token or request) and need full user info from MongoDB.
+      #if user is found then user was created , if not then we''ll throw error
+      #hold in variable and await
+      *just by using findbyId method, if we find user then we can optionally chain by using select method, this method will help you to remove refresh token and password
+      *select("-password -refreshToken")
+
+#step 8 : check for user creation success or failure      
+      
+      *also throw error for failure , 500 cause its ours falut
+
+#step 9 : return response to frontend if successed
+        
+        *make sure to export apiresponce in apiresponce file
+        *import apiresponce in controller file
+        *return res.status(201).json() : will send current status code and json responce, we'll send it in object format
+        * in json () create new object of apiresponce 
+        * in that newly created object add statusCode, createduser(which is data), and message of successfuly created

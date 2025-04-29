@@ -1,0 +1,37 @@
+explain lines : router.route('/register').post(
+    upload.field([
+    {
+        name : 'avatar',
+        maxCount : 1
+    },
+    {
+        name : 'images',
+        maxCount : 1
+    }
+    ]) 
+    registerUser);
+
+############################################################    
+
+ # to understand this:    
+
+# Summary : 
+
+name :	Tells the server which form field to expect the file from.	{ name: 'avatar' } → <input name="avatar">
+maxCount :	Limits how many files can be uploaded for that field.
+
+#############################################################################
+
+#What Happens If You Don’t Use Them?
+If you omit name, Multer won’t know which field to process → file won’t upload.
+
+If you omit maxCount, users could upload unlimited files → server overload risk!
+
+####################################################################################
+
+Real-World Scenario
+Imagine a social media signup form:
+
+You need one profile picture (avatar, maxCount: 1).
+
+You allow one cover photo (coverImage, maxCount: 1).
