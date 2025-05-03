@@ -596,3 +596,16 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
         *return res.status(201).json() : will send current status code and json responce, we'll send it in object format
         * in json () create new object of apiresponce 
         * in that newly created object add statusCode, createduser(which is data), and message of successfuly created
+
+$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+   REMAINDER :  5 MAY 2025    2.11AM
+I MADE A MISTACK WHICH TOOK ME 1 WEEK TO RESOLVE 
+
+*review why we use
+ 1. import path from path and 
+ 2. const normalizedPath = path.resolve(localFilePath);
+
+check file (big problem) for solution
+
+ #######################################################################

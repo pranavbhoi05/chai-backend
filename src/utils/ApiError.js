@@ -4,20 +4,20 @@ class ApiError extends Error {
         //this all are same as variables,so dont get confused on statuscode (name anything you want) 
         statuscode,
         message = "something went wrong",
-        stack =  "",
-        errors = []     //to give multiple errors in array format
+        errors = [], //to give multiple errors in array format
+        stack =  ""    
     ){
         super(message)
         this.statuscode = statuscode 
         this.data = null
         this.message = message
-        this.success = false
+        this.success = false;
         this.errors = errors
 
         if(stack){
             this.stack = stack
     }else{
-        error.captureStackTrace(this, this.constructor)
+        Error.captureStackTrace(this, this.constructor)
     }
 }
 
