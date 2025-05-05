@@ -53,8 +53,10 @@ const registerUser = asyncHandler(async (req, res) => {
   
  // step 4 : check for images, avatar
  const avatarLocalPath =  req.files?.avatar[0]?.path;
- const coverImageLocalPath = req.files?.coverImage?.[0]?.path; 
-  
+let coverImageLocalPath;
+    if (req.files && Array.isArray(req.files.coverImage) && req.files.coverImage.length > 0) {
+        coverImageLocalPath = req.files.coverImage[0].path
+    }
  
 
  if(!avatarLocalPath){ 
@@ -82,6 +84,8 @@ const user = await User.create({
   username : username.toLowerCase()
 
 })
+
+console.log(req.files);
 
 const createdUser = await User.findById(user._id).select(
   "-password -refreshToken"

@@ -13,9 +13,9 @@ connectDB()
     console.log(`Server is reunning at port : 
       ${process.env.PORT} `);
   })
-  app.on("error",(err) => {
-    console.log("error",err);
-  })
+  // app.on("error",(err) => {
+  //   console.log("error",err);
+  // })
 })
 .catch((err) => {
   console.log("MONGO DB CONNECTION FAILED", err);

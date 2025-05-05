@@ -608,4 +608,24 @@ I MADE A MISTACK WHICH TOOK ME 1 WEEK TO RESOLVE
 
 check file (big problem) for solution
 
- #######################################################################
+ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+#05/5/2025 2:20 pm (vid no 14 How to use postman for backend)
+
+#go to postman site or download and select post and paste url and add the credentials in form.data
+#also check in mondodb and uploaded files in cloudinary 
+#everytime user created (_id) generates automatically
+#also clodinary automatically create public url for uploaded files
+#unlink file in clodinary just before return , cause our testing is done , now we want our file remove from db ,even if it fails to upload
+*  fs.unlinkSync(localFilePath)
+# try to console.log(req.files)
+
+#we have added check for avatar if avatarLocalPath is exist
+#NOTE : # there is no gauranty if coverimage is created , what if its undefined(""), and if its undefined then how to optionally get url from coverimage
+#we'll use classic if condition : 1. req.files : to check files are exist 
+                                  2. create array and use isarray() it check if its array or not
+                                  3. if its array then its lenght is more than 0 or not
+                                  4. now we can set local path : store in variable :  req.files.coverImage[0].path   
+                                  # same thing we can do with avatar
+
+#make changes and config in postman
