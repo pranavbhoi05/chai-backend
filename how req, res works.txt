@@ -1,0 +1,4 @@
+Here's why req is used instead of res:
+
+req (Request) :	Contains data coming from the client, like headers, cookies, query parameters, etc.
+res (Response):	Used to send a response back to the client. You don’t use this to read incoming tokens or user info.

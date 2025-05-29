@@ -1,0 +1,49 @@
+#req.header (or more commonly req.headers) refers to the HTTP headers sent by the client (e.g., browser or frontend app) in an HTTP request — like GET, POST, etc.
+#It’s part of the request object in Node.js/Express (and similar frameworks), and it's how you access metadata about the request, such as:
+
+Authorization tokens
+Content types
+User agents
+Custom headers
+
+#####################################################################################################
+
+🧩 Why Headers Matter in Logout
+1. When a user logs out from your frontend, you need to know who is logging out.
+2. But… you can't trust the user to just send their ID in the request body (they could fake it). Instead, you rely on the Authorization header to safely identify them.
+
+####################################################################################################
+
+ req.header('Authorization') reads the header where the token is sent.
+
+That’s it. That’s what .header() does — it reads that "Authorization" part from the request.
+
+fetch('http://localhost:5000/logout', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer abc123'
+  }
+});
+
+This means:
+
+"Hey backend, I want to logout. Here's my token: abc123"
+
+##########################################################################################################
+
+✅ 2. Backend Reads the Token from the Header
+Here’s what your Express route might look like:
+
+app.post('/logout', (req, res) => {
+  const authHeader = req.header('Authorization'); // <--- This is the key part
+  console.log(authHeader); // Outputs: "Bearer abc123"
+
+  // Now you can verify the token, invalidate it, etc.
+  res.send('Logged out');
+});
+
+
+ req.header('Authorization') reads the header where the token is sent.
+That’s it. That’s what .header() does — it reads that "Authorization" part from the request.
+
+

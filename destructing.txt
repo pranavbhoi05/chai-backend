@@ -1,0 +1,30 @@
+🔧 Imagine you have a box (an object):
+const box = {
+  apple: '🍎',
+  banana: '🍌',
+  orange: '🍊'
+};
+
+
+
+Now, normally, if you want to get what's inside the box, you do this:
+const a = box.apple;
+const b = box.banana;
+const o = box.orange;
+That works fine, but it’s a little repetitive. You’re writing box. again and again.
+
+
+############################################################################################
+
+
+✅ Destructuring makes this easier:
+
+const { apple, banana, orange } = box;
+
+This does the same thing, but in a cleaner way. It says:
+
+“Take apple, banana, and orange out of box and make variables with those names.”
+
+Now you can use apple, banana, and orange directly in your code.
+
+ 

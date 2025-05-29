@@ -627,5 +627,231 @@ check file (big problem) for solution
                                   3. if its array then its lenght is more than 0 or not
                                   4. now we can set local path : store in variable :  req.files.coverImage[0].path   
                                   # same thing we can do with avatar
-
 #make changes and config in postman
+
+$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+# 09/5/2025 1:20 pm (Access Refresh Token, Middleware and cookies in Backend)
+
+#byusing acces token and refreshToken we'll create login method
+*in controllers create login user and write to list
+
+#NOTE :
+
+*step 4 : check for password :
+                                #NOTE : DON'T MAKE CHANGES IN CAPITAL (User : belongs to mongoose) , insted use this (user)
+                                *await cause take time and use small(user)
+                                *we gonna use isPasswordCorrect(which is created in  user model) in user controller , now we can directly access this.password property along with entite isPasswordCorrect function 
+
+# const ispasswordvalid = await user.isPasswordCorrect(password) : in this statement we using Password from req.body 
+*add validation for password
+#step 5 : its too common to use access and refreshToken , so we'll create separate method for it,so whenever we wnated to access tokens we'll call that method
+#make sure to create that method on top of the controller file 
+*i created generateAccessAndRefreshTokens , i wont use asynchandler here cause we'arent handling web request here, cause its our intenal method
+#we gonna have to pass userid,also gonna use trycatch for error handling
+* so in this method (generateAccessAndRefreshTokens) i'll add async and create function with parameter userid, in that function use trycatch
+*to generate token , we need to find user, so create method to find user (userid) 
+*create method for access token and refresh token and hold in variable : 
+    e.g  1. const accessToken = await user.generateAccessToken()
+         2. const refreshToken = await user.generateRefreshToken()
+#tokens are generated but they arent gone out of method
+*we give access token to user but we keep refreshToken in db , so that we dont need to ask password frequently
+#so how to add refreshToken in db, and how to add value in object :
+*user.refreshToken = refreshToken
+#understanding the code : user is an object representing a user (perhaps pulled from a database or created during login).
+                          refreshToken is a variable (most likely a string) that holds a new refresh token (used to keep a user logged in after their access token expires).
+                          You're storing that refresh token on the user object, probably to save it later or send it somewhere.
+
+#also gonna need to save user, when we gonna save mogoose model will kick in in user model (passwordfeild), whenever we save, password is nessesry
+#in that case we use validatebeforesave method : 1.  It's an option you can use when saving a Mongoose document to enable or disable validation before saving it to the database
+                                                 2.  This tells Mongoose not to run validation checks (like checking required fields, string length, etc.) before saving the document.
+                                                 3.  Using { validateBeforeSave: false } skips that validation, which can be useful in specific cases:
+                                                    *You’ve already validated the data manually and don’t want Mongoose to do it again.
+                                                    *You’re making a partial update and know it will pass later validations.
+                                                    *You want to avoid validation errors temporarily (e.g., during data migration or patch operations).
+*user.save({validateBeforeSave: false}) and make sure to await , will take time
+#now we have our refreshToken and accessToken, we have also store refreshToken in db,but we've refrence of refrencetoken in here, so when the method succesfuly till now, then return both refresh and access token
+* return {accessToken, refreshToken}
+#we have successfullyreturn it but in method not in login system
+#now whenever we needed access and refresh token i will call generateAccessAndRefreshTokens method, which we have created 
+
+*in step 5 add : generateAccessAndRefreshTokens and pass (user._id) also await and add destruturing of access and refreshToken 
+#when we await generateRefreshToken this method it returns accessToken & refrencetoken 
+#const {accessToken , refreshToken} = await
+   generateAccessAndRefreshTokens(user._id) : This line is using destructuring assignment to extract accessToken and refreshToken from the result of an async function called generateAccessAndRefreshTokens.
+#The variables are:
+1. accessToken
+2. refreshToken
+These two variables are being declared using const and assigned values from the object returned by the generateAccessAndRefreshTokens function.
+
+ we'll add few changes : 
+#we should never share password to user
+#right now user we've create his refresh tokens are empty
+#u can either update the user object or add user query
+#we are doing login method, so it's (user) will have its own (user)method, (its same as we previouly created method for register user method)   so  we need to hind refresh token and password. so we'll add another db method  
+*const loggedInUser = User.findById(user._id).select(
+    "-password -refreshToken"
+  )
+
+ 6. set cookies :
+  #whenever we send cookie we need DESIGN few options of cookie ,
+  *our cookie can be modify by default , but when we add httpsOnly:true and secure:true, this cookies can only be modify by server, frontend cannot modify
+  *now return status code and also send tokens and (http)options, you can send cookies as much as you want by using .cookie().cookie 
+  *in .json send apiresponce 
+
+ #but still we havent set route for this method 
+
+  #also we can also perform logout method too here, its easy
+  #to perform logout method we have 2 task to do :
+  task : clear user cookies and remove access,redresh tokes from usermodel 
+
+  *create logout method using asyncHandler 
+  #we need to create middleware first 
+  if i give form to someone and ask to logout , he will log out anyone one he wants by adding his emailid, for this solution we need to learn one concept
+  #as we know we study middleware,(meet me before go), we'll use this concept, we also learn multer which we use to send images with form data, this is what middleware is
+  #now if u clearly see req and res this all are just an object , in that object we add cookies,we add files through multer ,and by using cookieParser we add cookies
+  #thats how we can use our own too , we can design our own middleware (thats we are gonna do)
+
+  #as you can see in app.js just by using app.js we add cookieparser ,  by doing this now we can access cookies in controllers,
+  #cookies access 2 ways,(you can access cookies in responce, cause we added new object),you can access cookies in request (.cookie) why? ,causw we add cookie as middleware
+
+ #lets add our middleware
+ *create new file name auth.js in middleware (this middleware will verify if user is exist or not)
+ *directly export with const  variable (verifyJWT)
+ #when WE login in the user, then we provide him access, refreah token , on its bases we'll verify if user got right tokens or not, if you got true login then
+ we'll add(create) new object in req e.g (req.user) , give any name req.pranav
+
+#NOTE : next = my work is done, now forward this where you want
+
+#how to get tokens access , req has access of cookies, in app.js we have given accessfor cookies (cookieParser), so now we have access of cookies 
+
+*req.cookies.accessToken ,why accessToken (cause we have added in contollers and have access of this token)
+#we'll see refreshToken in next video,and how it will be use in frontend
+*add optional chaining (what if cookies doesnt have access of accessToken)
+# what if user is sending custom header req.header(),whenever header comes it commonly use for "Authorization"
+*also add optional chaining after Authorization
+#you can find this option in postman go in header < we write name Authorization and in send value in format of (Bearer _ tokensname), syntax (Authorization : bearer <token>)
+#we does'nt want the whole bearer token, we just wants tokens value
+*so we use javascript here with (replace) method and we replace (Bearer and space) with (""),now we'll only get tokens value
+#now we'll get token from cookies or we'll get from Authorization
+*hold this whole thing in variable name(token)
+* if(condition) if token doesnt exist then throw error
+*if token exist then we'll ask to jwt (token is right or wrong,and what info is in it)
+*import jwt and import apierror
+#then ask jwt to verify(we directly get verify method in jwt here)
+#there are 2 things need to provide to verify the token : (token:string) and (secretOrpublic key path)
+#we can generate tokens and can also add info but only 1 specific person can decode who got (secret key)
+#hold this whole thing in variable (decodedToken)
+
+#NOTE : (decodedToken) In short:
+1.The line jwt.verify(...) both verifies the token and decodes it.
+2.The decoded token contains the payload data (like user ID).
+3.That data is used to find the user and attach it to the request.
+
+#now we gonna await cause we'll perform operation of database _id
+*import User form model
+* await User.findById(decodedToken?._id).select("-password -refreshToken")
+# Why this task is necessary
+🔐 1. To ensure the user still exists
+    2. To get the latest user data
+ # we took _id refrence from user model
+ *hold in variable(user) and add condition if user exist
+
+ #if user really does exist then,as we have access of req here we'll add new object here
+ * req.user = user
+    next()
+   #req.user = in here user is variable
+   #user =  im giving access of user to req object(user)
+   #just cause our work is done so next() 
+
+#we'have created middleware and also exported it ,  but how middleware are getting use,middlewares are mostly use in routes
+#all this work we should have do in (trycatch)
+
+#as we know we created login method but did'nt create route , lets create route
+*go user.route and create new route for loginuser : we'll take post cause we are taking informationx
+*create new route for logoutuser
+*make sure to export logout user in user.controller
+*now whererver i wanted enject the middelware, before this method runs:
+router.route("/logout").post(logoutUser), then just before logoutUser i'll add (verifyJWT) method here, and thats it,middleware enject
+# whenever we write this 2 methods, then router confuse which method runs first, but who will tell the route which should be run first ,so
+#so thats why we wrote next() in the end in auth.js file
+# when (verifyJWT)'s  works done then it will move to next (logoutUser) by help of next()
+
+#summery : 1. we ask to verifyJWT, then verifyJWT comes from auth middleware
+           2. it will take token from cookies or from Authorization 
+           3. then verifies the token and also decodes the token   
+           4. if user property found then , add user info in req.user(which is variable), and then next
+
+#now just cause you have reached to logout method (in routes), and just before one middleware is already exicuted
+# in user controlers, when i go to logoutUser method ,priviosly i had only access of req.body 
+#but now i have access of req.user
+
+#currenetly :
+#i was login and i had access token, and on that bases i run query in db and add one req.user,
+# NOW I HAVE ACCESS OF REQ.BODY,REQ.COOKIES AND REQ.USER
+* if req.user is available then get _id from it and  
+
+#priviosly we were not able to access _id but now we can access
+#findByIdAndUpdate : dont ask many things like findbyid,it ask two things :
+1. it ask query (user_id) and what needs to be updated 
+#User.findByIdAndUpdate(req.user._id, { $set : undefined })
+#in this method(findByIdAndUpdate) we use mongodb operator , and its name is (set), set basicaly asked which feild needs to be update
+#we also and (new : true)  , explanation: in return it will give new updated value  
+*await the User (no need to store in variabe)
+#now refreshToken are removed from db , its time to clear cookies from db
+*add cookies (so only server can madify cookies) , simply copy from userlogin(controller file)
+#NOTE  : make sure to write same name (accessToken) in clearcookie as we write in userlogin method and send options too 
+#NOTE : sometimes we write (req,_,next) insted (req,res,next), cause sometimes res is empty so we use (_)
+
+#we could have write our middleware in controlers too, but we write it in separatly in middleware so code can be reuseable for e.g add post or like the post
+
+$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+# 19/5/2025 6:00 pm (Access token and Refresh Token in Backend)
+#we'll create endpoint in this video (for tokens)
+
+#24/5/2025 had issues with loginUser :  i didnt match password with registeruser that cause username and mail issue happned
+#also add logout route in postman and (save as), we send the all collection to frontend so we create collection of register,login ,logout etc
+
+27/5/2025 5.00pm
+#as we know we were gonna talk about tokens in frontend (auth middelware)
+#things needs to know about tokens:
+                                    we use access and refresh token so user wont need to enter userid and pass everytime
+                                    when frontend send request to get token (to refresh access token) so that we need to give endpoint where it will hit the api(that refresh my access and refreah token)
+
+# so we'll create endpoint for user                                    
+*in user controllers we'll create controller method (refreshaccesstoken) before creating endpoint.
+
+*step 1: whererver we want to send refresh token,then we can access from cookies ,if anyone hitting that endpoint then we can access from cookies
+but what if someone using mobile app then we'll send from req.body, also hold in variabe (incomingrefeshtoken), i give this name cause i do also have refresh token in db
+
+*step 2:  add if condition if incomingrefeshtoken doesnt exist 
+
+*step 3:verify incomingrefeshtoken, before that import jwt in usercontroller
+#we did same thing before in auth middleware, we verifyJWT tokens in here, we get decoded info
+#while verifing token we give two things : token and REFRESH_TOKEN_SECRET 
+#hold in variabe (decode token), so we get decoded info 
+#just cause i have access of _id in refresh token (in usermodel),and if i have access of it so now i can run query in mongo db and get info of user  
+#use USER.findById to find user and hold in variablename (user),and add if condition if someone send wrong token 
+
+#we got token in two ways : 1. incomingrefeshtoken  (decodedToken) and
+                            2. when entire refreshtoken was created in (model), then we also save that token in generateAccessAndRefreshTokens (user.refreshToken), this encoded (refreshToken) token we also saved in user ,
+so we gonna have to match this tokens
+*so we will compare this incomingrefeshtoken(just cause its encoded,we did choose decodedToken to compare) and user.refreshToken in if condition
+
+#to to send cookies in token create (options )method , you can write this options before or after (gererating token)
+
+*step 4 : generate new token
+#now generateAccessAndRefreshTokens(user._id) and return responce, also send cookie in responce
+#while sending responce , in cookie, we havent store access and refresh token so 
+#we'll decode that token in generateAccessAndRefreshTokens : (const {accessToken , newrefreshToken} = await 
+  generateAccessAndRefreshTokens(user._id))
+#also send json responce, WHILE sending json responce their can issue while sending refreshtoken , cause we have already use refreshToken name in user
+# so change the name of refreshToken while destructuring access and refresh token
+#also send message
+
+#add trycatch from decodedToken to all (for error handling )
+###now we have our controller but still dont have endpoint, to create endpoint go to route
+
+*whiel creating route make sure to export refreshAccessToken in controller and import in route
+#and just cause i have write all the jwt code in controller so dont need add verifyJWT middleware in route
+**save
