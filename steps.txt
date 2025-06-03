@@ -854,4 +854,22 @@ so we gonna have to match this tokens
 
 *whiel creating route make sure to export refreshAccessToken in controller and import in route
 #and just cause i have write all the jwt code in controller so dont need add verifyJWT middleware in route
-**save
+**save (commit)
+
+$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$4
+# 2/6/2025 6:00 pm (Access token and Refresh Token in Backend)
+confidence ,how the controllers are write and writing edit functionality
+
+#subscription :
+(we could have add subscription in user model, but cause we are following stadurd practice, wed will create separate model)
+whats subscription : channel and subscribers (channel is also user and whoever subscribe the channel are also user, so thats why we can do comment and all)
+we keep them both separately so we can match their ids, thats we gonna do.
+
+id's will automatically generate
+we'll add users in subscribers, well also add users in channel cause channel is also user
+
+*create model for subscription 
+#id will Automatically add so dont add id in schema
+#think about it : whenever we got to page and if you are login then button supposed to also show subscribed, (while we are sending true or false from backend that user you are searchimg is already subscribed), it means that info will come from backend
+
+
