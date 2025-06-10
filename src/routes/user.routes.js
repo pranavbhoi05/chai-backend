@@ -8,6 +8,7 @@ import { logoutUser } from '../controllers/user.controller.js';
 const router = Router()
 
 router.route("/register").post(
+  //we use fields so that we can upload multiple files by using array
     upload.fields([
         { name: "avatar", maxCount: 1 },
         { name: "coverImage", maxCount: 1 }

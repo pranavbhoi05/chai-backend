@@ -632,7 +632,7 @@ check file (big problem) for solution
 $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 # 09/5/2025 1:20 pm (Access Refresh Token, Middleware and cookies in Backend)
 
-#byusing acces token and refreshToken we'll create login method
+#by using acces token and refreshToken we'll create login method
 *in controllers create login user and write to list
 
 #NOTE :
@@ -872,4 +872,83 @@ we'll add users in subscribers, well also add users in channel cause channel is 
 #id will Automatically add so dont add id in schema
 #think about it : whenever we got to page and if you are login then button supposed to also show subscribed, (while we are sending true or false from backend that user you are searchimg is already subscribed), it means that info will come from backend
 
+while creating users we do few activities which are must  ++++++++++++++++++++++
+#its time write controllers  
 
+*create method for (changecurrentpassword)
+currenetly i do not need to check if user is logged in or cookie are present, cause i create route i'll add jwt there(we have created middleware for it)
+while changing current password of user, its depends on us how many field we need.we'll take that feilds from req.body
+*const {oldPassword, newPassword} = req.body 
+
+now think about it: 
+               1. firstly i need user so that i can go in his feild and verify the password,
+               2. now how to take user : if user is able to change password it means he is logged in,
+               3.  and why that logged in happen ? cause auth middelware is (running)applied,
+               4.  and what middleware does : go in auth middelware where u'll see user in req.user (req.user = user)
+                so now i can take user id from req.user
+
+* const user = await user.findById(req.user?._id)               
+# we do not need to check pass here, cause we have already create isPasswordCorrect methos in model
+#so well use isPasswordCorrect method (it will give true or false value)
+*now this user have (isPasswordCorrect) method so we'll check if oldPassword matches :  user.isPasswordCorrect(oldPassword)
+*also hold in variable and condition if password is incorrect
+#now gonna need to add method to set newPassword
+
+#############################################################################
+*user.password = newPassword
+#(in here user is variable which we created above and password feild was created in model ,and newPassword)
+#for understanding this :  
+Imagine you have this object:
+let user = {
+  name: "Pranav",
+  password: "abc123"
+};
+################################
+Now if you write : 
+user.password = "xyz789";
+###############################
+Now the object becomes:
+{
+  name: "Pranav",
+  password: "xyz789"
+}
+
+#in user model just before saving it (pre) hook will exicutes and if its modify then it will hash password
+# user.password comes from user model and we have already created pre hook in user model so it will automatically hash the password before saving it to db 
+#if u see (user.password = newPassword) we have just set the object but didnt save,so add save method
+
+*user.password = newPassword    (ignore)
+*await user.save({validateBeforeSave: false})
+#You're saying: "Set a new password."
+                Then calling .save() tells Mongoose to update the user in MongoDB.
+                Because the pre("save") hook runs, the new password will be hashed automatically before saving.
+##################################################################################################
+*now return json responce and status
+
+#if you see user model eraser model
+#if i want to get current user depends on situations how it will hit endpoints, but we need to create one  endpoint, where we'll perform current user (get)
+its too easy cause we have already created middleware(auth) , where we have injected user in req.user
+#and if user is logged in then its easy get current user
+*create method for (getCurrentUser) and directly return status and data in json responce.cause middleware is already runned on our req(user is injected in that onject)
+* make sure to export
+
+#its upon us what we are allowing user to change, im giving(fullname and email)
+*create method (updateAccountDeatails)
+#get user details from body AND also add validation if fullName and email doesnt exist
+#use findByIdAndUpdate method and also $set the feilds which u want to update
+#also use select method and apply on -password and hold whole thing in variabe and return in responce status and data in json responce
+
+*create method for updateUserAvatar
+#while updating avatar , just review we have created multer middelware for filehandling, so we have access of req.file, and 
+same thing we done before when when we were registring user in controlers
+
+*get avatar file from request (from url)
+* upload avatar on cloudinary
+*upload avatar on cloudinary by usind clodinary method which we created 
+*check if avatar url is uploaded  like(avatar.url), why we using url  u can see in model in avatar feild where we took type:string, we get entire avatar object but we only need url, so took url
+*update (set) user avatar in db by using findByIdAndUpdate
+*also use select method , cause we dont wanna send password
+*and return responce
+*also make sure to export 
+
+*same thing do with coverImage as it is (copy paste)
