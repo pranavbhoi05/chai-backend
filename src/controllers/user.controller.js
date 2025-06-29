@@ -4,6 +4,8 @@ import { User } from "../models/user.model.js";
 import {uploadOnCloudinary} from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken";
+import mongoose from "mongoose";
+
 
 const generateAccessAndRefreshTokens = async (userId) =>{
   try {
@@ -302,9 +304,12 @@ const changeCurrentPassword = asyncHandler(async (req , res) =>{
   //step 1
   const {oldPassword, newPassword} = req.body 
   
-  const user = await user.findById(req.user?._id)
+  const user = await User.findById(req.user?._id)
+  if(!user){
+    throw new ApiError(404, "user not found")
+  }
 
-  //step 2
+  //step 2 check if current password is correct
   const isPasswordCorrect = await user.
   isPasswordCorrect(oldPassword)
   
@@ -313,6 +318,11 @@ const changeCurrentPassword = asyncHandler(async (req , res) =>{
   }   
   
   //step 3 set new password
+  // for understanding how user.password = newPassword works
+  //let a = {};        // a is an object
+  // let b = "hello";   // b is a variable
+  // a.text = b;        // store the value of b in the 'text' property of a
+
   user.password = newPassword
   await user.save({validateBeforeSave: false})
 
@@ -321,6 +331,7 @@ const changeCurrentPassword = asyncHandler(async (req , res) =>{
   .status(200)
   .json(new ApiResponse(
     200,
+    {},
     "Password changed successfully"
   ))
 })
@@ -357,7 +368,7 @@ const changeCurrentPassword = asyncHandler(async (req , res) =>{
       },
       {new: true}, // return the updated user
     ).select(
-      "-password 
+      "-password"
     )
 
     return res
@@ -376,6 +387,10 @@ const changeCurrentPassword = asyncHandler(async (req , res) =>{
 
      if(!avatarLocalPath){
       throw new ApiError(400, "Avatar file is missing")}
+
+      // todos : write code for delete previous avatar file from cloudinary
+
+
 
       // upload avatar on cloudinary
      const avatar =  await uploadOnCloudinary(avatarLocalPath)
@@ -404,7 +419,6 @@ const changeCurrentPassword = asyncHandler(async (req , res) =>{
       )
     )
   })
-
 
   const updateUserCoverImage = asyncHandler(async (req, res) => {
      const coverImageLocalPath = req.file?.path
@@ -440,18 +454,172 @@ const changeCurrentPassword = asyncHandler(async (req , res) =>{
     )
   })
 
+  const getUserChannelProfile = asyncHandler(async (req, res) => {
+    //todo's:
+  // 1. get username from params
+  // 2. find user by username
+  // 3. check if user exists
+  // 4. return user profile
+
+    const {username} = req.params
+   // "Take the value of username from the URL params and create a new variable named username."
+
+   
+    if(!username?.trim()){
+      throw new ApiError(400, "username is required")
+    }
+
+    // User.find({username})
+
+   const channel = await User.aggregate([
+    {
+      $match: {
+        username: username.toLowerCase()
+      }
+    },
+    {
+      $lookup: {
+          from: "subscriptions",    ///	Which collection to join (pull data from)
+          localField: "_id",        //Field from the current collection
+          foreignField: "channel",  // Match to 'channel' in subscriptions (we are calculating subscribers so we are matching with channel)
+          as: "subscribers"         //Name of the new array field to add
+      } 
+    },    
+    {
+      $lookup: {
+         from: "subscriptions",    // Again join with subscriptions
+         localField: "_id",        
+         foreignField: "subscriber",  // Match to 'subscriber' in subscriptions (to calculate how many channels a user has subscribed to) 
+         as: "subscribedTo"
+      }
+    },
+    {
+      $addFields: {  
+            subscribersCount: {
+              $size: "$subscribers" // Count the number of subscribers
+            },
+            channelSubscribedToCount:{
+              $size: "$subscribedTo" // Count the number of channels subscribed to
+        },
+        isSubscribed: {
+          $cond: {
+            if:{ $in: [req.user?._id, "$subscribers.subscriber"]}, // in this code $subscribers from above lookup and subscriber is the field in subscription model
+            then: true,
+            else: false
+          }
+        }    
+      },
+    },
+    {
+      $project: {
+        username: 1,
+        fullName: 1,
+        subscribersCount: 1,
+        channelSubscribedToCount: 1,
+        isSubscribed: 1,
+        avatar: 1,
+        coverImage: 1,
+        email: 1,
+        createdAt: 1
+      }
+    }
+  ])
+
+  if(!channel?.length){    
+    throw new ApiError(404, "Channel not found")
+  }
+
+  return res
+  .status(200)
+  .json(
+    new ApiResponse(200,channel[0], // since we are using aggregate, it will return an array, so we need to take first element
+      "User channel profile fetched successfully"
+    )
+  )
+  })
+
+  const getWatchHistory = asyncHandler(async (req, res) => {
+    const user = await User.aggregate([
+     //todo's:
+     // 1.Filters the User collection to find the currently logged-in user by _id.
+      {
+        $match:{
+          _id: new mongoose.Types.ObjectId(req.user._id)
+        }
+      },
+
+      // 2. Joins the videos collection with the User collection 
+      // Matches the warchHistory array (video IDs stored in the user document) with _id field in videos collection.
+      // The resulting documents are stored in watchHistoryVideos.
+      {
+        $lookup: {
+          from: "videos",  //	Which collection to join (pull data from)
+          localField:"watchHistory", //  This is the field in the current document (User model) that contains video IDs
+          foreignField: "_id", //  This is the field in the "videos" collection we want to match against (usually ObjectId)
+          as: "watchHistoryVideos", // name of the new array field to add
+          pipeline: [
+            {
+              $lookup: {
+                from: "users",
+                localField: "owner", // field in videos that contains user ID
+                foreignField: "_id", // field in users that matches user ID
+                as: "owner", // name of the new field to add
+                pipeline: [
+                  {
+                  $project: {
+                    fullName: 1,
+                    username: 1,
+                    avatar: 1
+                  }
+                }
+              ]
+            }
+          },
+          {
+            $addFields: {
+              owner: {
+                $first: "$owner" // since owner is an array, we need to take first element
+              }
+            }
+          }
+        ]
+        }
+      }
+    ])
+
+    // Safety check
+  if (!user.length || !user[0]) {
+    return res
+      .status(404)
+      .json(new ApiResponse(404, null, "User not found"));
+  }
+
+    return res
+    .status(200)
+    .json(
+      new ApiResponse(
+      200,
+      user[0].watchHistoryVideos,
+      "Watch history fetched successfully"
+    )
+  )
+  })
+
 
 export {
         registerUser,
-        loginUser,
+        loginUser, 
         logoutUser,
         refreshAccessToken,
         changeCurrentPassword,
         getCurrentUser,
         updateAccountDeatails,
         updateUserAvatar,
-        updateUserCoverImage
+        updateUserCoverImage,
+        getUserChannelProfile,
+        getWatchHistory
       }
+      
 
 
     

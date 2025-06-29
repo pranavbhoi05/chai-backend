@@ -1,0 +1,9 @@
+explain export const Subscription = mongoose.model("Subscription", subscriptionSchema)
+
+🧠 Breakdown:
+1. mongoose.model()
+This is a method from Mongoose (MongoDB ODM for Node.js) used to create a model.
+
+A model in Mongoose is like a blueprint for documents in a MongoDB collection.
+
+It lets you perform database operations like .find(), .save(), .updateOne(), etc.

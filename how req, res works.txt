@@ -2,3 +2,57 @@ Here's why req is used instead of res:
 
 req (Request) :	Contains data coming from the client, like headers, cookies, query parameters, etc.
 res (Response):	Used to send a response back to the client. You don’t use this to read incoming tokens or user info.
+
+####################################################################################################################
+
+NOTE : req.params.username	Comes From URL WHICH IS	Defined by route :username
+
+###########################################################################################
+
+❓ You’re asking:
+"In const { username } = req.params;, are we using username because it's also a field in the User model? Are they connected?"
+
+✅ Short Answer:
+No — they are not directly connected.
+The username in:
+ const { username } = req.params;
+ is just a JavaScript variable name.
+You could name it anything — it’s just getting data from the URL, not the database.
+
+ Why we happen to use the same name:
+We often use the same name (username) because it’s convenient and meaningful — it matches both:
+
+1. The field in the database: User.username
+2.The route parameter: :username in /channel/:username
+
+But they are not linked automatically.
+
+
+####################################################################################################################
+
+req.params vs req.body (Main Difference)
+
+✅ req.params = when you send data in the URL
+Used to identify a specific resource, like a user or post.
+
+✅ req.body = when you send data in the request body
+Used to send form data, like name, email, password, etc.
+
+#################################################################################################################
+
+🔄 Analogy (Real-life Example)
+Imagine you're calling a food delivery service:
+
+If you say: "I want order number 55"
+→ That's like req.params (you're giving a specific ID in the path).
+
+If you say: "I want a pizza with cheese and olives"
+→ That's like req.body (you're sending data for them to create something new).
+
+###################################################################################3
+
+✅ When to Use What?
+                            Situation	                                 You use
+1. Want to get/update/delete a specific item (user/post by ID)   :     	req.params
+2. Want to create or update something using form data (name,     :      req.body   
+ password, etc.)
