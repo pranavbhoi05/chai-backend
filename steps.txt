@@ -1185,3 +1185,8 @@ we need more than one matching — like filtering, projecting, sorting, or using
 #now he'll directly get object (owner), where he'll use (.) , and just by using dot he'll get all values from it
 
 *now return responce
+
+*now create route for all the controllers,
+*just cause user not sending data we'll use (get) instead (post) in user route
+*we use patch instead post 
+* few things are still missing in vid 20

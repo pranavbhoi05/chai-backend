@@ -539,33 +539,30 @@ const changeCurrentPassword = asyncHandler(async (req , res) =>{
   })
 
   const getWatchHistory = asyncHandler(async (req, res) => {
-    const user = await User.aggregate([
-     //todo's:
-     // 1.Filters the User collection to find the currently logged-in user by _id.
-      {
-        $match:{
-          _id: new mongoose.Types.ObjectId(req.user._id)
-        }
-      },
+  const user = await User.aggregate([
+    // 1. Filter the User collection to find the currently logged-in user by _id
+    {
+      $match: {
+        _id: new mongoose.Types.ObjectId.createFromHexString(req.user._id)
+      }
+    },
 
-      // 2. Joins the videos collection with the User collection 
-      // Matches the warchHistory array (video IDs stored in the user document) with _id field in videos collection.
-      // The resulting documents are stored in watchHistoryVideos.
-      {
-        $lookup: {
-          from: "videos",  //	Which collection to join (pull data from)
-          localField:"watchHistory", //  This is the field in the current document (User model) that contains video IDs
-          foreignField: "_id", //  This is the field in the "videos" collection we want to match against (usually ObjectId)
-          as: "watchHistoryVideos", // name of the new array field to add
-          pipeline: [
-            {
-              $lookup: {
-                from: "users",
-                localField: "owner", // field in videos that contains user ID
-                foreignField: "_id", // field in users that matches user ID
-                as: "owner", // name of the new field to add
-                pipeline: [
-                  {
+    // 2. Join the videos collection using the watchHistory array
+    {
+      $lookup: {
+        from: "videos",
+        localField: "watchHistory",
+        foreignField: "_id",
+        as: "watchHistoryVideos",
+        pipeline: [
+          {
+            $lookup: {
+              from: "users",
+              localField: "owner",
+              foreignField: "_id",
+              as: "owner",
+              pipeline: [
+                {
                   $project: {
                     fullName: 1,
                     username: 1,
@@ -578,32 +575,30 @@ const changeCurrentPassword = asyncHandler(async (req , res) =>{
           {
             $addFields: {
               owner: {
-                $first: "$owner" // since owner is an array, we need to take first element
+                $first: "$owner"
               }
             }
           }
         ]
-        }
       }
-    ])
+    }
+  ]);
 
-    // Safety check
+  // Safety check
   if (!user.length || !user[0]) {
-    return res
-      .status(404)
-      .json(new ApiResponse(404, null, "User not found"));
+    return res.status(404).json(
+      new ApiResponse(404, null, "User not found")
+    );
   }
 
-    return res
-    .status(200)
-    .json(
-      new ApiResponse(
+  return res.status(200).json(
+    new ApiResponse(
       200,
       user[0].watchHistoryVideos,
       "Watch history fetched successfully"
     )
-  )
-  })
+  );
+});
 
 
 export {
