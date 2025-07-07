@@ -208,8 +208,8 @@ const logoutUser =  asyncHandler(async (req,res) =>{
   await User.findByIdAndUpdate(
     req.user._id,
     {
-      $set : {
-        refreshToken : undefined
+      $unset : {
+        refreshToken : 1   // 1 means delete this field
       }
     },
     {
@@ -543,7 +543,8 @@ const changeCurrentPassword = asyncHandler(async (req , res) =>{
     // 1. Filter the User collection to find the currently logged-in user by _id
     {
       $match: {
-        _id: new mongoose.Types.ObjectId.createFromHexString(req.user._id)
+        _id: new mongoose.Types.ObjectId(req.user._id)
+
       }
     },
 
@@ -585,11 +586,11 @@ const changeCurrentPassword = asyncHandler(async (req , res) =>{
   ]);
 
   // Safety check
-  if (!user.length || !user[0]) {
-    return res.status(404).json(
-      new ApiResponse(404, null, "User not found")
-    );
-  }
+  // if (!user.length || !user[0]) {
+  //   return res.status(404).json(
+  //     new ApiResponse(404, null, "User not found")
+  //   );
+  // }
 
   return res.status(200).json(
     new ApiResponse(
