@@ -1190,3 +1190,13 @@ we need more than one matching — like filtering, projecting, sorting, or using
 *just cause user not sending data we'll use (get) instead (post) in user route
 *we use patch instead post 
 * few things are still missing in vid 20  
+
+$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+7/7/2025 MongoDB models for like playlist and tweet
+
+*create remaing models
+*as we know we have import mongooseAggregatePaginate in video model same thing impost in this model
+*also inject mongooseAggregatePaginate as we did in video model
+#id will automatically create so need to create mention id in model
+*while creating model i add array whenever we are adding videos
