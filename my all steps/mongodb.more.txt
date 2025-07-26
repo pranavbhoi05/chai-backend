@@ -1,0 +1,46 @@
+✅ What is isValidObjectId(userId)?
+It's a helper method from Mongoose, and it checks:
+
+Is the userId string a valid MongoDB ObjectId format?
+
+isValidObjectId("64ec8c5bf1a2f8e7d3fa5d91") → ✅ true  
+isValidObjectId("hello123") → ❌ false  
+
+##############################################################
+
+✅ When to use it?
+Use it before querying by userId, to avoid crashes or bad queries:
+
+import { isValidObjectId } from "mongoose";
+
+if (userId && isValidObjectId(userId)) {
+  filter.owner = userId;
+}
+
+Why?
+
+✅ Prevents invalid MongoDB queries
+
+✅ Cleaner, safer filter logic
+
+✅ Avoids edge-case bugs when someone sends garbage like ?userId=banana
+
+###########################################################################
+
+$regex :
+* $regex stands for regular expression.
+* It's used to match strings based on a pattern.
+ Example (with options):
+                       {title: { $regex: "video", $options: "i" } }
+                        This will match "Video", "VIDEO", "ViDeO" etc. (case-insensitive).
+                            
+
+$options:
+* $options is used along with $regex to control how the pattern is matched.
+* Most commonly used options:
+                             "i" → case-insensitive
+                             "m" → multiline
+                             "s" → allows . to match newline
+                             "x" → ignores whitespace in pattern
+
+                            

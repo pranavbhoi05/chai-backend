@@ -1,0 +1,39 @@
+🔹 API = Application Programming Interface
+It is a way for two programs (usually client and server) to talk to
+each other — just like how you talk to a person using a common language
+ (like English), computers talk using APIs.
+
+ ##################################################################
+
+ 🔧 In the context of web development:
+* Your backend (Node.js, Express) creates APIs (also called routes or endpoints).
+* Your frontend (like React, or even Postman) calls those APIs to:
+
+Send data (e.g., upload a video)
+Get data (e.g., list of videos)
+Update or delete data (e.g., edit or delete a video)
+
+
+###########################################################################
+
+Example (Real Life)
+
+ You build this API route:
+router.patch("/videos/:videoId/toggle-publish", togglePublishStatus)
+---------------------------------------------------------------------
+Then the frontend (React or Postman) sends a request:
+PATCH /videos/64f123abc/toggle-publish
+-----------------------------------------
+Your backend:
+Finds the video by ID
+Flips its isPublished status
+Sends a response:
+
+###############################################################
+
+| Term       | Meaning                                    |
+| ---------- | ------------------------------------------ |
+| **API**    | Way to access features/data of your app    |
+| **Route**  | A specific API (like `/videos/:id`)        |
+| **Client** | Who calls the API (browser, Postman, app)  |
+| **Server** | Who responds to the API (your Express app) |

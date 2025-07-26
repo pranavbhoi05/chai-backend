@@ -1200,3 +1200,24 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 *also inject mongooseAggregatePaginate as we did in video model
 #id will automatically create so need to create mention id in model
 *while creating model i add array whenever we are adding videos
+
+###########################################################################3
+
+What is filter.$or?
+It’s how you tell MongoDB:
+
+“Match at least one of these multiple conditions.”
+
+filter.$or = [
+  { title: { $regex: query, $options: "i" } },
+  { description: { $regex: query, $options: "i" } }
+];
+
+
+🧠 So in plain English:
+ Code                                              Meaning                               |
+ 
+ filter.$or = [...]                        Match at least one condition      |
+ [{ title: ... }, { description: ... }]    Either match title or description     |
+ $regex: query                             Look for a substring (like `%query%`) |
+ $options: "i"                             Case-insensitive search               |

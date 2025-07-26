@@ -56,3 +56,26 @@ If you say: "I want a pizza with cheese and olives"
 1. Want to get/update/delete a specific item (user/post by ID)   :     	req.params
 2. Want to create or update something using form data (name,     :      req.body   
  password, etc.)
+3.You want to customize or filter the result, without affecting 
+the resource structure.                                          :      req.query
+
+
+############################################################################################
+
+| Purpose                     | Method       | Accessed via          | Example URL                       |
+| --------------------------- | ------------ | --------------------- | --------------------------------- |
+| Access specific resource    | `req.params` | `/users/:id`          | `/users/123`                      |
+| Submit or update form data  | `req.body`   | POST/PUT/PATCH        | `/register` (with JSON/form data) |
+| Filter/search/sort/paginate | `req.query`  | `/endpoint?key=value` | `/posts?page=2&search=react`      |
+
+#########################################################
+Cheat Code to Remember:
+🛣 req.params → part of URL path (/videos/:id)
+
+❓ req.query → part of URL query (?page=2&limit=10)
+
+📨 req.body → part of request payload (sent by frontend when submitting a form)
+
+
+
+ 

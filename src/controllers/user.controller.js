@@ -231,8 +231,7 @@ const logoutUser =  asyncHandler(async (req,res) =>{
     200,"User logged out successfully"))
 }) 
 
-const refreshAccessToken = asyncHandler(async (req , res) =>
-  {
+const refreshAccessToken = asyncHandler(async (req , res) =>{
   //todo's:
   // 1. get refresh token from cookies or body
   // 2. check if refresh token exists
