@@ -7,6 +7,7 @@ import {asyncHandler} from "../utils/asyncHandler.js"
 import {uploadOnCloudinary} from "../utils/cloudinary.js"
 
 
+
 const getAllVideos = asyncHandler(async (req, res) => {
     const { page = 1, limit = 10, query, sortBy = "createdAt", sortType = "desc", userId } = req.query
     //TODO: get all videos based on query, sort, pagination
@@ -115,6 +116,8 @@ const publishAVideo = asyncHandler(async (req, res) => {
             throw new ApiError(500, "Failed to upload video")
         }
 
+        
+
         // step 4: create the video document in the database
     const video = await Video.create({
         title: title.trim(),
@@ -183,38 +186,58 @@ const getVideoById = asyncHandler(async (req, res) => {
 
 const updateVideo = asyncHandler(async (req, res) => {
     const { videoId } = req.params
+
+    console.log("req.file =", req.file);
+    console.log("req.body =", req.body);
+
     //TODO: update video details like title, description, thumbnail
     if(!isValidObjectId(videoId)) {
         throw new ApiError(400, "Invalid video ID")
     }
 
-    const {title , description , thumbnail} = req.body
+    const {title , description} = req.body
     if(!title?.trim() || !description?.trim()) {
         throw new ApiError(400, "Title and description are required")
     }
 
-    // step 1: find the video
-    const video = await Video.findByIdAndUpdate(
+    let thumbnailUrl = null; // Initialize thumbnailUrl as null
+    if(req.file) {
+        const cloudinary = await uploadOnCloudinary(req.file.path)
+        // console.log("cloudinary =", cloudinary);
+        
+        if(cloudinary?.secure_url) {
+            thumbnailUrl = cloudinary.secure_url; 
+        }
+    }
+
+    
+    // build the update object 
+    const updateFields = {
+        title: title.trim(),
+        description: description.trim(),
+    }
+
+    // If thumbnailUrl is not null, then add it to the updateFields object
+    if(thumbnailUrl) {
+        updateFields.thumbnail = thumbnailUrl;  //Only add the thumbnail field to the update if a new thumbnail was uploaded.
+    }
+
+    //update the video in the database
+    const updateVideo = await Video.findByIdAndUpdate(
         videoId, 
-        {
-            $set : {
-                title: title.trim(),
-                description: description.trim(),
-                thumbnail
-            }
-    },
-            {new: true} // return the updated video
+           { $set: updateFields},  //Finds the video by videoId and updates only the fields in updateFields.
+           { new: true}
     )
 
-    if(!video) {
+    if(!updateVideo) {
         throw new ApiError(404, "Video not found")
     }
 
-    // step 2: return the response
+    //return the response
     return res
     .status(200)
     .json(
-        new ApiResponse(200, "Video updated successfully", video)
+        new ApiResponse(200, "Video updated successfully", updateVideo)
     )
 
 })
@@ -222,13 +245,30 @@ const updateVideo = asyncHandler(async (req, res) => {
 const deleteVideo = asyncHandler(async (req, res) => {
     const { videoId } = req.params
     //TODO: delete video
+
     if(!isValidObjectId(videoId)) {
         throw new ApiError(400, "Invalid video ID")
     }
-     const video = await Video.findByIdAndDelete(videoId)
+    
+    const video = await Video.findByIdAndDelete(videoId)
+    
     if(!video) {
         throw new ApiError(404, "Video not found")
     }
+
+    if(video.videoFile?.public_id) {
+        // If the video has a videoFile, delete it from Cloudinary
+        await cloudinary.uploader.destroy(video.videoFile.public_id, 
+            { resource_type: "video" }  //video is just a string label
+        );
+        }
+        
+    if(video.thumbnail?.public_id) {
+        // If the video has a videoFile, delete it from Cloudinary
+        await cloudinary.uploader.destroy(video.thumbnail.public_id, 
+            { resource_type: "thumbnail" }   // thumbnail is just a string label
+        );
+        }
 
     return res
     .status(200)
